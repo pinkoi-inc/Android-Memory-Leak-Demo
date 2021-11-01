@@ -20,16 +20,20 @@ class MainActivity : AppCompatActivity() {
     downloadTask?.start()
   }
 
-  class DownloadTask(val holdActivity: Activity) : Thread() {
+  class DownloadTask(var holdActivity: Activity?) : Thread() {
 
     var toast: Toast? = null
     override fun run() {
       sleep(30 * 1000)//30 second
-      holdActivity.runOnUiThread {
+      holdActivity?.runOnUiThread {
         toast = Toast.makeText(holdActivity, "download finish", Toast.LENGTH_SHORT)
         toast?.show()
       }
     }
+  }
 
+  override fun onDestroy() {
+    downloadTask?.holdActivity = null //avoid memory leak
+    super.onDestroy()
   }
 }
