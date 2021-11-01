@@ -2,6 +2,7 @@ package com.pinkoi.demo.memoryleak
 
 import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.pinkoi.demo.memoryleak.databinding.ActivityMainBinding
 
@@ -15,14 +16,19 @@ class MainActivity : AppCompatActivity() {
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    downloadTask = DownloadTask()
+    downloadTask = DownloadTask(this)
     downloadTask?.start()
   }
 
-  class DownloadTask : Thread() {
+  class DownloadTask(val holdActivity: Activity) : Thread() {
 
+    var toast: Toast? = null
     override fun run() {
-      sleep(60 * 1000)//60 second
+      sleep(30 * 1000)//30 second
+      holdActivity.runOnUiThread {
+        toast = Toast.makeText(holdActivity, "download finish", Toast.LENGTH_SHORT)
+        toast?.show()
+      }
     }
 
   }
